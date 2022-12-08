@@ -1,0 +1,23 @@
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="52"
+    height="52"
+    fill="none"
+    viewBox="0 0 52 52"
+  >
+    <rect
+      width="51"
+      height="51"
+      x="0.5"
+      y="0.5"
+      fill="#fff"
+      stroke="#E8E6EA"
+      rx="14.5"
+    ></rect>
+    <path
+      fill="#E94057"
+      fillRule="evenodd"
+      d="M27.75 16a1 1 0 011 1v4a1 1 0 11-2 0v-1h-10a1 1 0 110-2h10v-1a1 1 0 011-1zm3 3a1 1 0 011-1h3a1 1 0 110 2h-3a1 1 0 01-1-1zm-6 4a1 1 0 011 1v1h10a1 1 0 110 2h-10v1a1 1 0 11-2 0v-4a1 1 0 011-1zm-9 3a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1zm12 4a1 1 0 011 1v4a1 1 0 11-2 0v-1h-10a1 1 0 110-2h10v-1a1 1 0 011-1zm3 3a1 1 0 011-1h3a1 1 0 110 2h-3a1 1 0 01-1-1z"
+      clipRule="evenodd"
+    ></path>
+  </svg>

@@ -1,0 +1,63 @@
+<!-- <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="90"
+      height="90"
+      fill="none"
+      viewBox="0 0 168 178"
+    >
+      <g filter="url(#filter0_d_309_5431)">
+        <circle cx="79" cy="69" r="39" fill="#fff"></circle>
+      </g>
+      <path
+        fill="#F27121"
+        fillRule="evenodd"
+        stroke="#F27121"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M71.866 61.866a1.25 1.25 0 011.768 0L79 67.232l5.366-5.366a1.25 1.25 0 011.768 1.768L80.768 69l5.366 5.366a1.25 1.25 0 01-1.768 1.768L79 70.768l-5.366 5.366a1.25 1.25 0 01-1.768-1.768L77.232 69l-5.366-5.366a1.25 1.25 0 010-1.768z"
+        clipRule="evenodd"
+      ></path>
+      <defs>
+        <filter
+          id="filter0_d_309_5431"
+          width="178"
+          height="178"
+          x="-10"
+          y="0"
+          colorInterpolationFilters="sRGB"
+          filterUnits="userSpaceOnUse"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
+          <feColorMatrix
+            in="SourceAlpha"
+            result="hardAlpha"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          ></feColorMatrix>
+          <feOffset dy="20"></feOffset>
+          <feGaussianBlur stdDeviation="25"></feGaussianBlur>
+          <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0"></feColorMatrix>
+          <feBlend
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_309_5431"
+          ></feBlend>
+          <feBlend
+            in="SourceGraphic"
+            in2="effect1_dropShadow_309_5431"
+            result="shape"
+          ></feBlend>
+        </filter>
+      </defs>
+    </svg> -->
+
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <title>close</title>
+    <desc>Created with sketchtool.</desc>
+    <g id="web-app" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="close" fill="#F27121">
+            <polygon id="Shape" points="10.6568542 12.0710678 5 6.41421356 6.41421356 5 12.0710678 10.6568542 17.7279221 5 19.1421356 6.41421356 13.4852814 12.0710678 19.1421356 17.7279221 17.7279221 19.1421356 12.0710678 13.4852814 6.41421356 19.1421356 5 17.7279221"></polygon>
+        </g>
+    </g>
+</svg>
+
