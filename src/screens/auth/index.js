@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, {useEffect, useRef} from 'react';
 import {
   ActivityIndicator,
@@ -23,6 +24,7 @@ const LoginScreen = props => {
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState(null);
   const authState = useSelector(state => state.auth);
+  const isFocus= useIsFocused();
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -39,9 +41,9 @@ const LoginScreen = props => {
         props.navigation.navigate(ScreenNames.CardScreen);
       }
     }
-  }, [authState]);
+  }, [authState, isFocus]);
 
-
+   
 
   const handleSubmit = async () => {
     if (email == '' || password == '') {

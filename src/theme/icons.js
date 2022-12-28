@@ -26,3 +26,6 @@ export {default as IconImgPicker} from '../assets/icons/imgPicker.svg';
 export {default as IconChecked} from '../assets/icons/checked.svg';
 export {default as IconUncheck} from '../assets/icons/uncheck.svg';
 export {default as IconcancelNumber} from '../assets/icons/cancelNumber.svg';
+export {default as IconCreateGroup} from '../assets/icons/createGroup.svg';
+export {default as IconArrowRight} from '../assets/icons/arrowRight.svg';
+export {default as IconCreatedGroup} from '../assets/icons/createdGroup.svg';

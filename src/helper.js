@@ -129,5 +129,5 @@ export const fomatDate = date => {
 };
 
 export const showRoomName = (stringName, myName) => {
-  return stringName.split(', ').find(i => i !== myName);
+  return stringName;// stringName.split(', ').find(i => i !== myName);
 };

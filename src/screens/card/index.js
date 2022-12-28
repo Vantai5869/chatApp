@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -11,6 +12,7 @@ import Main from './components/Main';
 export default function CardScreen(props) {
   const dispatch = useDispatch();
   const authState = useSelector(state => state.auth);
+  const isFocus= useIsFocused();
   console.log({authState});
   useEffect(() => {
     dispatch(getAuth());
@@ -23,13 +25,13 @@ export default function CardScreen(props) {
     } else if (authState.data != null) {
       socket.emit('JOIN_ROOM', authState.data._id);
     }
-  }, [authState]);
+  }, [authState, isFocus]);
 
   if ((authState.data == null && authState.loading == false) || !authState?.data?.active) {
     console.log("ao ma---------------------"+authState?.active);
     props.navigation.navigate(ScreenNames.Login);
     return <View>
-      <Text>xxxxxxxxxxx card</Text>
+      <Text></Text>
     </View>;
   }
   return (

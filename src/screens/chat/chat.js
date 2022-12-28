@@ -329,7 +329,7 @@ const ChatScreen = props => {
           <Avatar
             size={56}
             url={
-              room?.avatar[0] === me.avatar ? room?.avatar[1] : room?.avatar[0]
+              room?.avatar
             }
             onPress={() => {}}
           />

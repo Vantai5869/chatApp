@@ -7,6 +7,7 @@ import {colors} from '../../../theme/colors';
 // import * as RootNavigation from './../../../RootNavigation';
 import {styles} from './MessageDisplay.styles';
 import {ScreenNames} from '../../../routes/screen';
+import { IconCreatedGroup } from '../../../theme/icons';
 
 let preId = '';
 let preUserName = '';
@@ -130,7 +131,9 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
     case 'info': {
       return (
         <View style={[styles.infoMessageWapper, {transform: [{scaleY: -1}]}]}>
-          {/* <Text style={styles.infoMessage}>{item.content} </Text> */}
+          <IconCreatedGroup/>
+          <Text style={styles.infoMessage}>{(messOfMe?'Bạn':item?.userId?.username)+' '+ item.content} </Text>
+         
         </View>
       );
     }

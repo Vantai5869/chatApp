@@ -46,17 +46,35 @@ export default function ProfilePage(props) {
   const authState = useSelector(state => state.auth.data);
   const [avatar, setAvatar] = useState();
   const [user, setUser] = useState();
+  const [interest, setInterest] = useState([]);
+  const [interestSelected, setInterestSelected] = useState([]);
   const handleClickImg = index => {
     props.navigation.navigate(ScreenNames.Gallery, {images, index});
   };
 
-  console.log({user})
-  console.log({authState})
+  useEffect(()=>{
+    const getInterest = async () => {
+      try {
+        const res = await axiosConfig.get('/interests/');
+        if(res)
+        setInterest(res.data?.interests)
+        console.log({res});
+      } catch (error) {
+        
+      }
+    };
+    getInterest();
+  },[])
+console.log({user});
   useEffect(() => {
     const getProfile = async () => {
       try {
         const res = await axiosConfig.get('/users/' + authState._id);
-        setUser(res.data?.data);
+        if(res){
+          setUser(res.data?.data);
+          setInterestSelected(res.data?.data?.interests);
+        }
+     
       } catch (error) {
         console.log('error');
         console.log(error);
@@ -106,6 +124,21 @@ export default function ProfilePage(props) {
     }
   };
 
+  const updateInterest=async()=>{
+    try {
+      const res = await axiosConfig.put('/users/' + authState._id, {
+        interests: interestSelected,
+      });
+      if(res){
+        console.log({res});
+      }
+    } catch (error) {
+      console.log('updateInterest err');
+      console.log({error});
+    }
+ 
+  }
+
   console.log('avatar=======================');
   console.log(avatar);
 
@@ -120,6 +153,24 @@ export default function ProfilePage(props) {
       },
     });
   };
+
+  const handleClickInterest=(item)=>{
+    console.log({item});
+    if(interestSelected.includes(item._id)){
+      const index= interestSelected.findIndex(i=>i==item._id);
+      const tmp= interestSelected;
+      tmp.splice(index,1);
+      setInterestSelected(tmp);
+    }else{
+      setInterestSelected([...interestSelected,item._id]);
+    }
+  }
+
+  useEffect(()=>{
+    if(interestSelected.length>0)
+      updateInterest()
+  },[interestSelected])
+
   return (
     <SafeAreaView style={styles.container}>
       {!isShowModal ? (
@@ -198,33 +249,17 @@ export default function ProfilePage(props) {
             <View style={styles.interests}>
               <Text style={styles.aboutTitle}>Interests</Text>
               <View style={styles.interestsCards}>
-                <View style={styles.interestsCard}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
-                <View
-                  style={[styles.interestsCard, styles.interestsCardChecked]}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
-                <View style={styles.interestsCard}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
-                <View
-                  style={[styles.interestsCard, styles.interestsCardChecked]}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
-                <View style={styles.interestsCard}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
-                <View
-                  style={[styles.interestsCard, styles.interestsCardChecked]}>
-                  <IconDbCheck />
-                  <Text>Travelling</Text>
-                </View>
+                {
+                  interest?.map(item=>{
+                    return (
+                      <TouchableOpacity style={[styles.interestsCard,interestSelected.includes(item._id) ?styles.activeInterest:{} ]} onPress={()=>handleClickInterest(item)}>
+                        <Image  source={{uri: item?.icon}} style={{width:20,height:20, marginRight:10, tintColor: interestSelected.includes(item._id)&&'#fff'}} />
+                        <Text style={{color:interestSelected.includes(item._id)&&'#fff'}}>{item?.text}</Text>
+                      </TouchableOpacity>
+                    )
+                  })
+                }
+              
               </View>
             </View>
 
@@ -436,4 +471,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 70,
   },
+  activeInterest:{
+    backgroundColor:'#E94057',
+  }
 });

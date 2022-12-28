@@ -62,10 +62,12 @@ export const styles = StyleSheet.create({
     opacity: 0.5,
   },
   infoMessageWapper: {
+    height:200,
     alignItems: 'center',
+    margin:'auto'
   },
   infoMessage: {
-    color: colors.white,
+    color: '#ADA2FF',
   },
 
   leftIMGMessageWapper: {

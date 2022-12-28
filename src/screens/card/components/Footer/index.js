@@ -22,7 +22,7 @@ export default function Footer({handleChoice, props, user}) {
           props.navigation.navigate(ScreenNames.ChatScreen, {
             room: {
               me: authState,
-              _id: hash(authState._id) + hash(user._id),
+              _id: hash(authState._id) + hash(user._id) + hash('63940858229cd0049bccbada'),
               userId: [user._id],
               name: user.username,
               avatar: [user?.avatar, ''],
