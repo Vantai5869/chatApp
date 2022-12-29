@@ -43,6 +43,16 @@ moment.locale('en', {
 });
 
 const MessengerScreen = props => {
+  useEffect(()=>{
+    socket.on('createGroupSuccess', data=>{
+      console.log("creadte------------");
+      if (me?._id) dispatch(fetchUsers({meId: me._id, page: 0}));
+
+    })
+    return () => {
+      socket.off('createGroupSuccess');
+    };
+  },[])
   const me = useSelector(state => state.auth.data);
   const dispatch = useDispatch();
   const screenState = useSelector(state => state.userList);
@@ -57,19 +67,21 @@ const MessengerScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
   const isCreate=  useRef(false)
   console.log({screenState});
+  console.log({createGroupUserIds});
   const renderUserMessage = ({item}) => {
     const handleClickUserMessage = async () => {
-      socket.emit('SEEN', {roomId: item._id, seenerId: me._id});
+      // socket.emit('SEEN', {roomId: item._id, seenerId: me._id});
       props.navigation.navigate(ScreenNames.ChatScreen, {
         room: {me: me, _id: item._id, name: item.name, avatar: item.avatar},
       });
+
     };
     console.log({searchList});
     if(item?.username && searchList.length>0 && isCreating){
       return (
-        <TouchableOpacity
+        <View
         style={styles.userMessageItem}
-        onPress={handleClickUserMessage}>
+       >
         <Avatar
           size={56}
           url={item?.avatar?[item?.avatar]:"https://miro.medium.com/max/720/1*W35QUSvGpcLuxPo3SRTH4w.png"}
@@ -95,22 +107,22 @@ const MessengerScreen = props => {
           )} */}
         </View>
         <TouchableOpacity onPress={()=>{
-           createGroupUserIds.includes(item._id)?
-          setCreateGroupUserIds(createGroupUserIds.filter(i=>i!=item._id)):
-          setCreateGroupUserIds([...createGroupUserIds, item._id])
+           createGroupUserIds.findIndex(el=>el._id==item._id)!=-1?
+          setCreateGroupUserIds(createGroupUserIds.filter(i=>i._id!=item._id)):
+          setCreateGroupUserIds([...createGroupUserIds, item])
         }
         }>
           {
             isCreating&&
             (
-               createGroupUserIds.includes(item._id)?
+               createGroupUserIds.findIndex(el=>el._id==item._id)!=-1?
             <IconChecked/>:
             <IconUncheck/>
             )
            
           }
         </TouchableOpacity>
-      </TouchableOpacity>
+      </View>
       )
     }else if(item?.name  &&!isCreating){
       return (
@@ -143,7 +155,7 @@ const MessengerScreen = props => {
               <Text style={styles.misMes}>{item.readBy[0]}</Text>
             )} */}
           </View>
-          <TouchableOpacity onPress={()=>{
+          {/* <TouchableOpacity onPress={()=>{
             createGroupUserIds.includes(item._id)?
             setCreateGroupUserIds(createGroupUserIds.filter(i=>i!=item._id)):
             setCreateGroupUserIds([...createGroupUserIds, item._id])
@@ -158,7 +170,7 @@ const MessengerScreen = props => {
               )
             
             }
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </TouchableOpacity>
       );
     }else{
@@ -198,15 +210,24 @@ const MessengerScreen = props => {
           username: me.username,
           avatar: me.avatar,
         },
-        roomId: hashArr([...createGroupUserIds, me._id]),
+        roomId: hashArr([...createGroupUserIds.map(i=>i._id), me._id]),
         content: "Đã tạo nhóm",
         type: 'info',
         readBy: [1],
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        userIds:[...createGroupUserIds, me._id]
+        userIds:[...createGroupUserIds.map(i=>i._id), me._id]
       };
+      props.navigation.navigate(ScreenNames.ChatScreen, {
+        room: {me: me, _id: hashArr([...createGroupUserIds.map(i=>i._id), me._id]), name: createGroupUserIds.map(i=>i?.username).join(', '), avatar: createGroupUserIds.map(i=>i?.avatar)},
+      });
+      setTimeout(()=>{
+        setIsCreating(false);
+        setCreateGroupUserIds([]);
+      },500);
+      
       socket.emit('sendMessage', data);
+      
     }
 
    
@@ -223,7 +244,6 @@ const MessengerScreen = props => {
       return; 
     }
     const getUserList = async () => {
-      console.log("kkkkkkkkkkkkkkk");
       setIsLoading(true);
       const res = await axiosConfig.get(
         `/users/0/20?search=${searchKey}&except=${me?._id}`,
@@ -236,11 +256,8 @@ const MessengerScreen = props => {
 
   useEffect(()=>{
     setIsLoading(false)
-    console.log({searchList});
   },[searchList])
 
-  console.log({xxxx:(isSearching||isCreating) &&searchList.length});
-  console.log({xxxx:screenState?.users});
   return (
     <SafeAreaView>
       <View style={styles.container}>

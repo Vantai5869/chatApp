@@ -314,6 +314,10 @@ const ChatScreen = props => {
     )
   }
 
+  const handleCall=() => {
+    socket.emit('call',{})
+  }
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -345,7 +349,7 @@ const ChatScreen = props => {
             </Text>
             <Text style={styles.status}>online</Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleCall}>
             <IconMore />
             {/* <Text style={styles.clear}>Close</Text> */}
           </TouchableOpacity>

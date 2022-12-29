@@ -14,7 +14,7 @@ export default function Avatar({onPress, url, size}) {
         style={[styles.avatar, {width: size, height: size}]}
       />
       )
-    }else if(url.length==2){
+    }else if(url.length>1){
       return(
          <View style={styles.avatars}>
           <Image
