@@ -11,7 +11,6 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   request => {
-    console.log(request);
     // Edit request config
     return request;
   },
@@ -23,7 +22,6 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   response => {
-    console.log(response);
     // Edit response config
     return response;
   },

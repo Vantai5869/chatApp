@@ -30,13 +30,15 @@ import {
 import { colors } from '../../theme/colors';
 import {
   IconBack,
-  IconChecked, IconImgPicker, IconMore,
+  IconChecked, IconImgPicker, IconMakeCall, IconMore,
   IconSend, IconUncheck
 } from '../../theme/icons';
 import Avatar from '../card/components/Avatar';
 import MessageDisplay from './MessageDisplay/MessageDisplay';
 // import BottomSheet from './BottomSheet';
 import { FlatList as FlastListBottomSheet, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ScreenNames } from '../../routes/screen';
+import { encryptData } from '../../helper/aes';
 
 const ChatScreen = props => {
   const [photos, getPhotos, save] = useCameraRoll();
@@ -70,12 +72,10 @@ const ChatScreen = props => {
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
   // callbacks
   const handleSheetChange = useCallback((index) => {
-    console.log("handleSheetChange", index);
   }, []);
   const handleShowBottonSheet = useCallback(() => {
     permision();
     setIsShowBottonSheet(true);
-    console.log({xxxxxx:bottomSheetRef.current});
     bottomSheetRef.current?.snapToIndex(0);
     setIsActiveBootomSheet(true);
     Keyboard.dismiss();
@@ -129,7 +129,7 @@ const ChatScreen = props => {
           avatar: me.avatar,
         },
         roomId: props.route.params.room._id,
-        content: messData.content,
+        content:  encryptData(messData.content, me?._id+props.route.params.room._id),
         type: messData.type,
         readBy: [1],
         createdAt: Date.now(),
@@ -143,7 +143,7 @@ const ChatScreen = props => {
           addNewUser({
             _id: props.route.params.room._id,
             avatar: [props.route.params.room.avatar[0]],
-            content: messData.content,
+            content: encryptData(messData.content, me?._id+props.route.params.room._id),
             name: props.route.params.room.name,
             userId: {
               _id: me._id,
@@ -154,10 +154,14 @@ const ChatScreen = props => {
           }),
         );
       }
-      socket.emit('sendMessage', data);
+      if(messData?.tmp!=true){
+        socket.emit('sendMessage', data);
+      }
       setTimeout(() => {
-        if(messData.type!=='image' || messData?.tmp)
-        dispatch(addMessageTmp(data));
+        console.log({messData})
+        if(messData.type!=='image' || !!messData?.tmp){
+          dispatch(addMessageTmp(data));
+        }
         dispatch(makeUserToTopList(data));
         try {
           flatList.current.scrollToIndex({index: 0});
@@ -211,7 +215,7 @@ const ChatScreen = props => {
   
 
   const renderItem = ({item, index}) => {
-    return <MessageDisplay onHandlePress={handleClosePress} item={item} me={me} index={index} props={props} />;
+    return <MessageDisplay onHandlePress={handleClosePress} item={item} me={me} index={index} roomId={props.route.params?.room?._id} props={props} />;
   };
 
   useEffect(() => {
@@ -222,57 +226,7 @@ const ChatScreen = props => {
       });
   }, [checkExitConversation]);
 
-  const handleSelectDocument = async type => {
-    let typeDoc = DocumentPicker.types.images;
-    switch (type) {
-      case 'image': {
-        typeDoc = DocumentPicker.types.images;
-        break;
-      }
-      case 'video': {
-        typeDoc = DocumentPicker.types.video;
-        break;
-      }
-
-      default:
-        typeDoc = DocumentPicker.types.images;
-    }
-    try {
-      const images = await DocumentPicker.pickMultiple({
-        type: typeDoc,
-      });
-      console.log({images});
-      return;
-      const res = await imageUpload([images[0]]);
-      const arr = [];
-      for (var i = 0; i < res.length; i++) {
-        arr.push(res[i].url);
-      }
-
-      if (arr[0]) {
-        console.log('res..........................');
-        console.log(res);
-        addCustomMessage({content: arr[0], type: type});
-      }
-    } catch (error) {
-      console.log('error');
-      console.log(error);
-    }
-  };
-
-  // const ref = useRef(null);
-
-  // const handleShowBottonSheet = useCallback(() => {
-  //   const isActive = ref?.current?.isActive();
-  //   if (isActive) {
-  //     ref?.current?.scrollTo(0);
-  //     setIsActiveBootomSheet(false);
-  //   } else {
-  //     ref?.current?.scrollTo(-200);
-  //     setIsActiveBootomSheet(true);
-  //   }
-  // }, []);
-
+ 
   const handleChecked=async (photos)=>{
     
     if(!imgsSelected.includes(photos?.node?.image?.uri)){
@@ -306,7 +260,6 @@ const ChatScreen = props => {
           imgsSelected.includes(photos?.node?.image?.uri)?
           <IconChecked/>:
           <IconUncheck/>
-
         }
       </View>
       </>
@@ -315,9 +268,55 @@ const ChatScreen = props => {
   }
 
   const handleCall=() => {
-    socket.emit('call',{})
+    const data={
+      roomId: props.route.params.room._id,
+      avatar: [props.route.params.room.avatar[0]],
+      content: "call",
+      name: props.route.params.room.name,
+      userId: {
+        _id: me._id,
+        username: me.username,
+      },
+      updatedAt: Date.now(),
+      readBy: [1],
+    }
+    socket.emit('call',data )
   }
 
+  // useEffect(()=>{
+             
+  //   socket.on('call',(data)=>{
+      
+      // const inFo = data.data
+      // if(inFo.userId._id==authState.data._id){
+      //   RootNavigation.navigate('Call', inFo)
+      // }
+      // else{
+      //   IncomingCall.display(
+      //     'callUUIDv4', // Call UUID v4
+      //     inFo.userId.username, // Username
+      //     inFo.userId.avatar, // Avatar URL
+      //     'Đang gọi', // Info text
+      //     20000 // Timeout for end call after 20s
+      //   );
+      // }
+     
+    //   console.log('==============================++++++++++++++++++++++++++')
+    //   console.log(data)
+      
+      
+    //   props.navigation.navigate(ScreenNames.Call, {
+    //     inFo
+    //   });
+    
+    // })
+    // props.navigation.navigate(ScreenNames.Call, {
+      
+    // });
+  //   return ()=>{
+  //     socket.off("call")
+  //   }
+  // },[])
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -347,10 +346,10 @@ const ChatScreen = props => {
                     me.username,
                   ).substring(0, 12) + '..'}
             </Text>
-            <Text style={styles.status}>online</Text>
+            <Text style={styles.status}>trạng thái</Text>
           </View>
-          <TouchableOpacity onPress={handleCall}>
-            <IconMore />
+          <TouchableOpacity style={{borderWidth:1, padding:12, borderRadius:10, borderColor:'#CCC'}} onPress={handleCall}>
+            <IconMakeCall />
             {/* <Text style={styles.clear}>Close</Text> */}
           </TouchableOpacity>
         </View>

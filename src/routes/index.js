@@ -5,12 +5,13 @@ import {
   createNativeStackNavigator
 } from '@react-navigation/native-stack';
 import React from 'react';
+import { navigationRef } from './navigate';
 import TabNavigator from './tab';
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigation = ({...props}) => (
-  <NavigationContainer >
+  <NavigationContainer ref={navigationRef}>
     <Stack.Navigator
       screenOptions={{
         cardOverlayEnabled: true,

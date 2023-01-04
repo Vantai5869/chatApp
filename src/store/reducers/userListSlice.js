@@ -57,8 +57,10 @@ const userListSlice = createSlice({
       const tmpUsers = state.users.sort(function (x, y) {
         return x._id == roomId ? -1 : y._id == roomId ? 1 : 0;
       });
+      console.log({uuuuuuuu:action.payload});
       tmpUsers[0] = {
         ...tmpUsers[0],
+        userId: action.payload?.userId,
         content: action.payload.content,
         readBy: action.payload.readBy,
         updatedAt: action.payload.updatedAt,

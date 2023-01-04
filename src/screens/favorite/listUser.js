@@ -6,12 +6,15 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {colors} from '../../theme/colors';
 import {IconDelete, IconFind} from '../../theme/icons';
 import {IconHeart} from '../../theme/icons';
 import {ScreenNames} from '../../routes/screen';
 import moment from 'moment';
+import ContentLoader from 'react-native-easy-content-loader';
+import BigPanel from '../../components/LoadingAnimation/BigPanel';
 const UserItem = ({item, props}) => {
   return (
     <TouchableOpacity
@@ -54,7 +57,7 @@ const ListUser = ({onSearch, listUser, ...props}) => {
         <IconFind />
         <TextInput
           style={styles.searchTxt}
-          placeholder="Search"
+          placeholder="Gõ tên ai đó.."
           onChangeText={text => handleSearch(text)}
         />
         {/* <Text style={styles.searchTxt}></Text> */}
@@ -66,7 +69,47 @@ const ListUser = ({onSearch, listUser, ...props}) => {
         </View>
         <View style={styles.timeline.line} />
       </View> */}
-      <View style={styles.listUser}>{list}</View>
+      <View style={styles.listUser}>
+        {list && list?.length>0?
+        list:
+        <View style={{marginTop:20, }}>
+          <View style={{display:'flex', flexDirection:'row'}}>
+            <View style={{width:20}}>
+              <ContentLoader 
+              active
+              tHeight={240}
+              tWidth={Dimensions.get('window').width/2-60} 
+              />
+            </View>
+            <View  style={{width:20, marginLeft:Dimensions.get('window').width/2-60}}>
+              <ContentLoader 
+              active
+              tHeight={240}
+              tWidth={Dimensions.get('window').width/2-50} 
+              />
+            </View>
+          </View>
+          <View style={{display:'flex', flexDirection:'row', marginTop:-50}}>
+            <View style={{width:20}}>
+              <ContentLoader 
+              active
+              tHeight={240}
+              tWidth={Dimensions.get('window').width/2-60} 
+              />
+            </View>
+            <View  style={{width:20, marginLeft:Dimensions.get('window').width/2-60}}>
+              <ContentLoader 
+              active
+              tHeight={240}
+              tWidth={Dimensions.get('window').width/2-50} 
+              />
+            </View>
+          </View>
+        </View>
+      
+      }
+        
+        </View>
     </>
   );
 };

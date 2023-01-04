@@ -34,7 +34,6 @@ const LoginScreen = props => {
   }, []);
   useEffect(() => {
     if (authState.data !== null) {
-      console.log({kkkk:authState});
       if(!authState?.data?.active){
         props.navigation.navigate(ScreenNames.Verification,{authState});
       }else{

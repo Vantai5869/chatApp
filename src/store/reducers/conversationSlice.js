@@ -37,8 +37,23 @@ const ConversationSlice = createSlice({
         return item;
       });
     },
+
+    deleteMessage: (state, action) => {
+      state.conversations = state.conversations.map(item => {
+        if (item._id == action.payload.roomId) {
+          const tmpData = [...item.data].filter(
+            ({_id}, i, _arr) => action.payload._id!=_id,
+          );
+          return {...item, data: tmpData};
+        }
+        return item;
+      });
+    },
+
+
     clearConversation: () => initialState,
   },
+
   extraReducers: builder => {
     builder
       .addCase(fetchConversation.pending, state => {
@@ -85,5 +100,5 @@ const ConversationSlice = createSlice({
   },
 });
 
-export const {addMessageTmp, clearConversation} = ConversationSlice.actions;
+export const {addMessageTmp, clearConversation, deleteMessage} = ConversationSlice.actions;
 export default ConversationSlice.reducer;

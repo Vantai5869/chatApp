@@ -10,6 +10,7 @@ import MessengerScreen from '../../screens/messenger';
 import Story from '../../screens/messenger/story';
 import ChatScreen from '../../screens/chat/chat';
 import Showimage from '../../screens/ShowImage/ShowImage';
+import Call from '../../screens/Call/Call';
 
 const Navigation = createNativeStackNavigator();
 
@@ -39,6 +40,18 @@ function MessagerTab({navigation, route}) {
       <Navigation.Screen
         name={ScreenNames.ChatScreen}
         component={ChatScreen}
+        options={({route}) => ({
+          tabBarVisible: false,
+          gestureEnabled: false,
+          headerShown: false,
+          headerShown: false,
+          title: '',
+          headerTransparent: true,
+        })}
+      />
+      <Navigation.Screen
+        name={ScreenNames.Call}
+        component={Call}
         options={({route}) => ({
           tabBarVisible: false,
           gestureEnabled: false,

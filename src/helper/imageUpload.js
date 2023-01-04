@@ -15,7 +15,6 @@ export const checkImage = file => {
 export const imageUpload = async images => {
   let imgArr = [];
   for (const item of images) {
-    console.log({item});
     const formData = new FormData();
 
     if (item.camera) {
@@ -35,11 +34,7 @@ export const imageUpload = async images => {
           body: formData,
         },
       );
-      console.log("=========+++++++++++++++++++++++++");
-      console.log("=========+++++++++++++++++++++++++");
-      console.log("=========+++++++++++++++++++++++++");
-      console.log("=========+++++++++++++++++++++++++");
-      console.log({res});
+   
       const data = await res.json();
       imgArr.push({public_id: data.public_id, url: data.secure_url});
     } catch (error) {

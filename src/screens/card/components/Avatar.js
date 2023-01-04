@@ -6,7 +6,6 @@ import {IconAdd} from '../../../theme/icons';
 export default function Avatar({onPress, url, size}) {
 
   const renderAvatar=()=>{
-    console.log({url:url.length});
     if(url.length==1){
       return  (
         <Image

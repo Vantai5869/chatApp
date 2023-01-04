@@ -8,10 +8,12 @@ import {colors} from '../../../theme/colors';
 import {styles} from './MessageDisplay.styles';
 import {ScreenNames} from '../../../routes/screen';
 import { IconCreatedGroup } from '../../../theme/icons';
-
+import { socket } from '../../../socketio/Socket';
+import axiosConfig from './../../../axiosConfig'
+import { decryptData } from '../../../helper/aes';
 let preId = '';
 let preUserName = '';
-const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
+const Messagedisplay = ({item, me, index,onHandlePress,roomId, props}) => {
   const [opentModal, setOpenModal] = useState(false);
   let render;
   const nameMess = preUserName;
@@ -34,7 +36,6 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
   preUserName = item.userId.username;
 
   const handleLongPress = () => {
-    console.log(item.content);
     if (messOfMe) setOpenModal(true);
   };
 
@@ -63,7 +64,7 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
               key={item._id}>
               <Text
                 style={!messOfMe ? styles.leftMessage : styles.rightMessage}>
-                {item.content}{' '}
+                {decryptData(item.content, item.userId._id+roomId) }{' '}
               </Text>
               {showTime && (
                 <Text style={styles.time}>{getTime(item.updatedAt)}</Text>
@@ -161,12 +162,12 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
                   }}
                   onPress={() =>
                     props.navigation.navigate(ScreenNames.Showimage, {
-                      uri: content[0],
+                      uri: decryptData(content[0], me?._id+props.route.params.room._id) ,
                     })
                   }
                   activeOpacity={0.9}
                   >
-                  <Image source={{uri: content[0]}} style={styles.oneImage} />
+                  <Image source={{uri:decryptData(content[0], me?._id+props.route.params.room._id) }} style={styles.oneImage} />
                 </TouchableOpacity>
                 {showTime && (
                   <Text style={styles.time}>{getTime(item.updatedAt)}</Text>
@@ -221,6 +222,17 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
       }
     }
   }
+
+  const handleDeleteMessage=async ()=>{
+    setOpenModal(!opentModal)
+    const res = await axiosConfig.delete(
+      `/messages/${item?._id}`,
+    );
+    console.log({deleteRes:res});
+
+    if(res)
+    socket.emit('DeleteMessage',{...item,roomId})
+  }
   return (
     <Animatable.View>
       <View style={styles.wapperMessage}></View>
@@ -257,8 +269,8 @@ const Messagedisplay = ({item, me, index,onHandlePress, props}) => {
                 <TouchableOpacity>
                   <Text style={styles.messageAction}>Chuyển tiêp</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text style={styles.messageAction}>Xóa</Text>
+                <TouchableOpacity onPress={handleDeleteMessage}>
+                  <Text style={styles.messageAction}>Thu hồi</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>

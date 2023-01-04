@@ -13,7 +13,6 @@ export default function CardScreen(props) {
   const dispatch = useDispatch();
   const authState = useSelector(state => state.auth);
   const isFocus= useIsFocused();
-  console.log({authState});
   useEffect(() => {
     dispatch(getAuth());
   }, []);

@@ -60,6 +60,9 @@ const Register = props => {
     }
   }, [authState]);
 
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
   const handleSubmit = async () => {
     const checkDate = isValidDate(dateOfBirth);
     const checkPhone = isValidPhone(phone);
@@ -79,7 +82,7 @@ const Register = props => {
 
     setLoadingNow(true);
      // gửi email xac minh
-    verifyCode.current= Math.floor(Math.random() * 10000);
+    verifyCode.current=getRandomInt(1000,9999) ;//Math.floor(Math.random() * 10000);
      try {
       const res = await axiosConfig.post('/send-mail', {
         email, content:`Mã xác minh ứng dụng của bạn là ${verifyCode.current}`

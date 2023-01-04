@@ -20,7 +20,7 @@ const Matches = props => {
   useEffect(() => {
     const getUserList = async () => {
       const res = await axiosConfig.get(
-        `/users/0/20?search=${searchKey}&except=${me?._id}`,
+        `/users/0/50?search=${searchKey}&except=${me?._id}`,
       );
       setUserList(res.data);
     };
@@ -38,13 +38,13 @@ const Matches = props => {
     <SafeAreaView>
       <ScrollView style={styles.container}>
         <View style={styles.container.header}>
-          <Text style={styles.container.header.title}>Matches</Text>
+          <Text style={styles.container.header.title}>Kết nối</Text>
           <TouchableOpacity style={styles.container.header.button}>
             <IconSortTwo stroke="#E94057" />
           </TouchableOpacity>
         </View>
         <Text style={styles.container.description}>
-          This is a list of people who have liked you and your matches.
+          Danh sách bạn có thể tìm thấy những người mà bạn muốn nói chuyện với họ..
         </Text>
         <ListUser
           time="today"

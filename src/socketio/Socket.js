@@ -4,7 +4,10 @@ import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {io} from 'socket.io-client';
 import {rootURL} from '../config';
-import {addMessageTmp} from '../store/reducers/conversationSlice';
+import { decryptData } from '../helper/aes';
+import { navigationRef } from '../routes/navigate';
+import { ScreenNames } from '../routes/screen';
+import {addMessageTmp, deleteMessage} from '../store/reducers/conversationSlice';
 import {
   makeUserToTopList,
   updateUserList,
@@ -26,8 +29,16 @@ const Socket = () => {
 
       socket.on('getMessage', data => {
         const dataTmp = {...data, readBy: [1]};
-        dispatch(addMessageTmp(dataTmp));
+        if(dataTmp?.userId?._id!==authState?.data?._id){
+          dispatch(addMessageTmp(dataTmp));
+        }
         dispatch(makeUserToTopList(dataTmp));
+      });
+
+      socket.on('DeleteMessage',  data => {
+       
+       dispatch(deleteMessage(data));
+      
       });
 
       socket.on('SEEN', data => {
@@ -42,7 +53,8 @@ const Socket = () => {
       });
 
       socket.on('call', data => {
-        const inFo = data.data;
+        const inFo = {...data, meId:authState?.data?._id};
+        navigationRef.navigate(ScreenNames.Call, inFo);
         // if (inFo.userId._id == authState.data._id) {
         //   RootNavigation.navigate('Call', inFo);
         // } else {
@@ -70,7 +82,7 @@ const Socket = () => {
     };
     socketOn();
 
-    return () => {
+    return () => {  
       socket.off('disconnect');
       socket.off('getMessage');
       socket.off('ping');

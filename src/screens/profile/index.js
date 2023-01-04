@@ -7,13 +7,15 @@ import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   IconCamera,
   IconDbCheck,
   IconDislike,
+  IconEdit,
   IconLike,
   IconMappin,
   IconNotLikeYet,
@@ -47,7 +49,10 @@ export default function ProfilePage(props) {
   const [avatar, setAvatar] = useState();
   const [user, setUser] = useState();
   const [interest, setInterest] = useState([]);
+  const [aboutContent, setAboutContent] = useState('chưa cập nhật');
+  const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [interestSelected, setInterestSelected] = useState([]);
+  const refInfoInput= useRef();
   const handleClickImg = index => {
     props.navigation.navigate(ScreenNames.Gallery, {images, index});
   };
@@ -58,14 +63,12 @@ export default function ProfilePage(props) {
         const res = await axiosConfig.get('/interests/');
         if(res)
         setInterest(res.data?.interests)
-        console.log({res});
       } catch (error) {
         
       }
     };
     getInterest();
   },[])
-console.log({user});
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -130,17 +133,25 @@ console.log({user});
         interests: interestSelected,
       });
       if(res){
-        console.log({res});
       }
     } catch (error) {
-      console.log('updateInterest err');
+      console.log({error});
+    }
+ 
+  }
+  const updateAboutUser=async()=>{
+    try {
+      const res = await axiosConfig.put('/users/' + authState._id, {
+        about: aboutContent,
+      });
+      if(res){
+      }
+    } catch (error) {
       console.log({error});
     }
  
   }
 
-  console.log('avatar=======================');
-  console.log(avatar);
 
   const goToChat = () => {
     props.navigation.navigate(ScreenNames.ChatScreen, {
@@ -155,10 +166,9 @@ console.log({user});
   };
 
   const handleClickInterest=(item)=>{
-    console.log({item});
     if(interestSelected.includes(item._id)){
       const index= interestSelected.findIndex(i=>i==item._id);
-      const tmp= interestSelected;
+      const tmp= interestSelected.slice();
       tmp.splice(index,1);
       setInterestSelected(tmp);
     }else{
@@ -170,6 +180,11 @@ console.log({user});
     if(interestSelected.length>0)
       updateInterest()
   },[interestSelected])
+
+  useEffect(()=>{
+    if(user?.about)
+      setAboutContent(user?.about)
+  },[user])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -218,43 +233,64 @@ console.log({user});
                   {user?.gender === 'male' ? 'Nam' : 'Nữ'}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.sendBtn} onPress={goToChat}>
-                <IconSend />
-              </TouchableOpacity>
+              {
+                !!props.route.params?.item&&
+                <TouchableOpacity style={styles.sendBtn} onPress={goToChat}>
+                  <IconSend />
+                </TouchableOpacity>
+              }
+             
             </View>
 
-            <View style={styles.location}>
+            {/* <View style={styles.location}>
               <View>
-                <Text style={styles.locationText}>Location</Text>
+                <Text style={styles.locationText}>Vị trí</Text>
                 <Text style={styles.positionText}>
-                  Chicago, IL United States
+                  Chưa xác định
                 </Text>
               </View>
               <View style={styles.mappinBtn}>
                 <IconMappin />
-                <Text>1km </Text>
+                <Text>xkm </Text>
               </View>
-            </View>
+            </View> */}
 
             <View style={styles.about}>
-              <Text style={styles.aboutTitle}>About</Text>
-              <Text style={styles.aboutTxt}>
-                {user?.about ? user?.about : 'nothing'}
-              </Text>
+              <View>
+              <Text style={styles.aboutTitle}>Thông tin</Text>
+              {/* <Text style={styles.aboutTxt}>
+                {aboutContent ? aboutContent : 'chưa cập nhật'}
+              </Text> */}
+              <TextInput value={aboutContent} ref={refInfoInput} onChangeText={(text)=>setAboutContent(text)}/>
               {user?.about.length > 50 && (
-                <Text style={styles.readMore}> Read more</Text>
+                <Text style={styles.readMore}> Xem thêm</Text>
               )}
+              </View>
+            <View style={{minWidth:300, position:'absolute', right:-250}}>
+               {
+                isEditingInfo?
+                <TouchableOpacity style={styles.mappinBtn} onPress={()=>{  setIsEditingInfo(false)  ;updateAboutUser()}}>
+                  <Text style={{color:'#D75281'}}>Save</Text>
+                </TouchableOpacity>:
+                <TouchableOpacity style={styles.mappinBtn} onPress={()=>{  setIsEditingInfo(true)  ;refInfoInput.current.focus()}}>
+                  <IconEdit />
+                </TouchableOpacity>
+              }
+            </View>
+             
+             
+             
             </View>
 
             <View style={styles.interests}>
-              <Text style={styles.aboutTitle}>Interests</Text>
+              <Text style={styles.aboutTitle}>Sở thích</Text>
               <View style={styles.interestsCards}>
                 {
                   interest?.map(item=>{
                     return (
                       <TouchableOpacity style={[styles.interestsCard,interestSelected.includes(item._id) ?styles.activeInterest:{} ]} onPress={()=>handleClickInterest(item)}>
-                        <Image  source={{uri: item?.icon}} style={{width:20,height:20, marginRight:10, tintColor: interestSelected.includes(item._id)&&'#fff'}} />
-                        <Text style={{color:interestSelected.includes(item._id)&&'#fff'}}>{item?.text}</Text>
+                        <Image  source={{uri: item?.icon}} style={{width:20,height:20, marginRight:10, tintColor: interestSelected.includes(item._id)?'#fff':'#000'}} />
+                        <Text style={{color:interestSelected.includes(item._id)?'#fff':'#000'}}>{item?.text}</Text>
                       </TouchableOpacity>
                     )
                   })
@@ -263,7 +299,7 @@ console.log({user});
               </View>
             </View>
 
-            <View style={styles.gallery}>
+            {/* <View style={styles.gallery}>
               <View style={styles.headGallery}>
                 <Text style={styles.aboutTitle}>Gallery</Text>
                 <Text style={styles.seeAllGallery}>See all</Text>
@@ -282,7 +318,7 @@ console.log({user});
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       ) : (
@@ -364,18 +400,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Sk-Modernist-Regular',
   },
   mappinBtn: {
-    width: 61,
+    width: 100,
     height: 34,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.c_FDECEE,
+    // backgroundColor: colors.c_FDECEE,
     paddingHorizontal: 12,
     paddingVertical: 0,
     borderRadius: 7,
+    
   },
   about: {
     marginTop: 30,
+    flexDirection:'row',
+    justifyContent:'space-between'
   },
   aboutTitle: {
     fontFamily: 'Sk-Modernist-Bold',
@@ -397,6 +436,7 @@ const styles = StyleSheet.create({
   },
   interests: {
     marginTop: 30,
+    marginBottom:50
   },
   interestsCards: {
     marginTop: 5,

@@ -15,6 +15,8 @@ import { colors } from '../../theme/colors';
 import {
   IconAdd,
   IconArrowRight,
+  IconCallCancel,
+  IconCancelCreateGroup,
   IconChecked,
   IconCreateGroup,
   IconFind,
@@ -23,6 +25,7 @@ import {
 } from '../../theme/icons';
 import Avatar from '../card/components/Avatar';
 import axiosConfig from '../../axiosConfig';
+import { decryptData } from '../../helper/aes';
 moment.locale('en', {
   relativeTime: {
     future: 'in %s',
@@ -45,7 +48,6 @@ moment.locale('en', {
 const MessengerScreen = props => {
   useEffect(()=>{
     socket.on('createGroupSuccess', data=>{
-      console.log("creadte------------");
       if (me?._id) dispatch(fetchUsers({meId: me._id, page: 0}));
 
     })
@@ -65,9 +67,6 @@ const MessengerScreen = props => {
   const [isCreating, setIsCreating] = useState(false);
   const [searchKey, setSearchKey] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const isCreate=  useRef(false)
-  console.log({screenState});
-  console.log({createGroupUserIds});
   const renderUserMessage = ({item}) => {
     const handleClickUserMessage = async () => {
       // socket.emit('SEEN', {roomId: item._id, seenerId: me._id});
@@ -76,7 +75,6 @@ const MessengerScreen = props => {
       });
 
     };
-    console.log({searchList});
     if(item?.username && searchList.length>0 && isCreating){
       return (
         <View
@@ -125,6 +123,7 @@ const MessengerScreen = props => {
       </View>
       )
     }else if(item?.name  &&!isCreating){
+      console.log({item});
       return (
         <TouchableOpacity
           style={styles.userMessageItem}
@@ -142,11 +141,16 @@ const MessengerScreen = props => {
             </Text>
             <Text style={styles.messenger}>
               {item?.userId?._id === me._id ? 'You: ' : ''} 
-              <Text style={styles.contenText}>
-                {item.content.length > 33
-                  ? item.content.substring(0, 30) + '...'
-                  : item.content}
+              {
+                item?.userId?._id === me._id?
+                '...':
+                <Text style={styles.contenText}>
+                {decryptData(item.content, item.userId._id+item._id).length > 33
+                  ?decryptData(item.content, item.userId._id+item._id).substring(0, 30)  + '...'
+                  : decryptData(item.content, item.userId._id+item._id)}
               </Text>
+              }
+             
             </Text>
           </View>
           <View style={styles.timeBox}>
@@ -174,11 +178,7 @@ const MessengerScreen = props => {
         </TouchableOpacity>
       );
     }else{
-      console.log({
-        username:item,
-         l:searchList.length>0,
-         is: isCreating
-      });
+    
       return <></>
     }
 
@@ -221,10 +221,8 @@ const MessengerScreen = props => {
       props.navigation.navigate(ScreenNames.ChatScreen, {
         room: {me: me, _id: hashArr([...createGroupUserIds.map(i=>i._id), me._id]), name: createGroupUserIds.map(i=>i?.username).join(', '), avatar: createGroupUserIds.map(i=>i?.avatar)},
       });
-      setTimeout(()=>{
-        setIsCreating(false);
-        setCreateGroupUserIds([]);
-      },500);
+      setIsCreating(false);
+      setCreateGroupUserIds([]);
       
       socket.emit('sendMessage', data);
       
@@ -235,11 +233,11 @@ const MessengerScreen = props => {
 
   useEffect(() => {
     if(!isCreating){
-      setSearchList(
-        screenState.users.filter(i =>
-          i.name.toLowerCase().includes(searchKey.toLowerCase()),
-        ),
-      );
+      // setSearchList(
+      //   screenState.users.filter(i =>
+      //     i.name.toLowerCase().includes(searchKey.toLowerCase()),
+      //   ),
+      // );
       // setSearching(false);
       return; 
     }
@@ -268,7 +266,10 @@ const MessengerScreen = props => {
             {
               createGroupUserIds.length>0?
               <IconArrowRight/>:
-              <IconCreateGroup stroke="#E94057" />
+            
+                isCreating? <IconCancelCreateGroup  />:
+                <IconCreateGroup stroke="#E94057" />
+              
             }
           </TouchableOpacity>
         </View>
@@ -303,6 +304,9 @@ const MessengerScreen = props => {
           {
             screenState.loading|| isLoading?
             <View style={styles.loader}>
+              <View style={{marginTop:20}}>
+                <ContentLoader active avatar  pRows={1} pHeight={[25]}  containerStyles={{width: 400,}} />
+              </View>
               <View style={{marginTop:20}}>
                 <ContentLoader active avatar  pRows={1} pHeight={[25]}  containerStyles={{width: 400,}} />
               </View>

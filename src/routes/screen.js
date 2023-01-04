@@ -18,4 +18,5 @@ export const ScreenNames = {
   Showimage: 'Showimage',
   ShowVideo: 'ShowVideo',
   Verification: 'Verification',
+  Call: 'Call',
 };

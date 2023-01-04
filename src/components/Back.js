@@ -9,7 +9,7 @@ export default function Back() {
       <IconBack />
       <View style={styles.content}>
         <Text style={styles.title}>Discover</Text>
-        <Text style={styles.des}>Chicago, II</Text>
+        <Text style={styles.des}>Gợi ý cho bạn</Text>
       </View>
     </TouchableOpacity>
   );

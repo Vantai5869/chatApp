@@ -129,6 +129,7 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Register from '../../screens/Register/Register';
 import ChatScreen from '../../screens/chat/chat';
 import Verification from '../../screens/verification';
+import Call from '../../screens/Call/Call';
 
 const Navigation = createNativeStackNavigator();
 
@@ -206,6 +207,18 @@ function HomeTab({navigation, route}) {
         options={({navigation}) => ({
           gestureEnabled: false,
           headerShown: false,
+        })}
+      />
+      <Navigation.Screen
+        name={ScreenNames.Call}
+        component={Call}
+        options={({route}) => ({
+          tabBarVisible: false,
+          gestureEnabled: false,
+          headerShown: false,
+          headerShown: false,
+          title: '',
+          headerTransparent: true,
         })}
       />
     </Navigation.Navigator>

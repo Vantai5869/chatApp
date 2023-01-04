@@ -8,8 +8,6 @@ import {listActivities} from './../messenger/index';
 
 export default function StoryItem({item, props}) {
   const handleClickStory = item => {
-    console.log('item');
-    console.log(item);
     props.navigation.navigate(ScreenNames.Story, {listActivities, item});
   };
 

@@ -17,8 +17,6 @@ const height = 'auto';
 
 export default Story = props => {
   const story = props.route.params.item;
-  console.log('story');
-  console.log(story);
   const [imgs, setImgs] = useState([]);
   const topRef = useRef();
   const thumbRef = useRef();
